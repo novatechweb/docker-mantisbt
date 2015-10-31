@@ -17,6 +17,8 @@ set -e
 # MANTISBT_DB_DB_NAME  : MANTISBT_DB_DB_NAME,  MANTISBT_DB_ENV_MYSQL_DATABASE | MANTISBT_DB_ENV_POSTGRES_DB,       config_inc.php ( $g_database_name )
 # MANTISBT_DB_USER     : MANTISBT_DB_USER,     MANTISBT_DB_ENV_MYSQL_USER | MANTISBT_DB_ENV_POSTGRES_USER,         config_inc.php ( $g_db_username )
 # MANTISBT_DB_PASSWORD : MANTISBT_DB_PASSWORD, MANTISBT_DB_ENV_MYSQL_PASSWORD | MANTISBT_DB_ENV_POSTGRES_PASSWORD, config_inc.php ( $g_db_password )
+# MANTISBT_MAIL_USER     : MANTISBT_MAIL_USER,     config_inc.php ( $g_smtp_username )
+# MANTISBT_MAIL_PASSWORD : MANTISBT_MAIL_PASSWORD, config_inc.php ( $g_smtp_password )
 
 if [[ ! -z "${MANTISBT_DB_ENV_MYSQL_VERSION}" ]]; then
     MANTISBT_DB_DB_NAME=${MANTISBT_DB_DB_NAME:-${MANTISBT_DB_ENV_MYSQL_DATABASE}}
@@ -82,6 +84,12 @@ update_config_inc() {
         fi
         if [[ ! -z "${MANTISBT_DB_PASSWORD}" ]]; then \
             sed -i 's|$g_db_password\( *= \).*|$g_db_password\1'"'${MANTISBT_DB_PASSWORD}'"';|' ${MANTISBT_BASE_DIR}/config_inc.php
+        fi
+        if [[ ! -z "${MANTISBT_MAIL_USER}" ]] && grep -q 'g_smtp_username' ${MANTISBT_BASE_DIR}/config_inc.php ; then \
+            sed -i 's|$g_smtp_username\( *= \).*|$g_smtp_username\1'"'${MANTISBT_MAIL_USER}'"';|' ${MANTISBT_BASE_DIR}/config_inc.php
+        fi
+        if [[ ! -z "${MANTISBT_MAIL_PASSWORD}" ]] && grep -q 'g_smtp_password' ${MANTISBT_BASE_DIR}/config_inc.php ; then \
+            sed -i 's|$g_smtp_password\( *= \).*|$g_smtp_password\1'"'${MANTISBT_MAIL_PASSWORD}'"';|' ${MANTISBT_BASE_DIR}/config_inc.php
         fi
     fi
     # uploads are not configured by default. Make a directory for where uploads are located
